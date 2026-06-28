@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>AuditLib</RootNamespace>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>AuditLib</PackageId>
+    <Description>Biblioteca de auditoria limpa e parametrizável para EF Core. Gera automaticamente trilhas de auditoria com soft-delete, diff legível e resolução de nomes.</Description>
+    <Version>1.0.0</Version>
+    <Authors>AuditLib</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
+  </ItemGroup>
+
+</Project>

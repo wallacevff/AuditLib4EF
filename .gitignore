@@ -1,0 +1,10 @@
+bin/
+obj/
+*.nupkg
+*.user
+*.suo
+.vs/
+packages/
+*.sln.docstates
+.DS_Store
+Thumbs.db
