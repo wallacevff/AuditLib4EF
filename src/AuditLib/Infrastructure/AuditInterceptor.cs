@@ -867,10 +867,11 @@ public class AuditInterceptor : SaveChangesInterceptor
             var value = prop.CurrentValue;
             if (value is null) continue;
 
+            var propDisplayName = ResolvePropertyName(child.Metadata.ClrType.Name, prop.Metadata.Name);
             if (value is bool b)
-                parts.Add($"{prop.Metadata.Name}: {(b ? _options.BoolTrueDisplay : _options.BoolFalseDisplay)}");
+                parts.Add($"{propDisplayName}: {(b ? _options.BoolTrueDisplay : _options.BoolFalseDisplay)}");
             else
-                parts.Add($"{prop.Metadata.Name}: {value}");
+                parts.Add($"{propDisplayName}: {value}");
         }
 
         if (parts.Count > 0)
