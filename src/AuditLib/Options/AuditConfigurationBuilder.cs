@@ -90,6 +90,12 @@ public sealed class AuditConfigurationBuilder
         return this;
     }
 
+    public AuditConfigurationBuilder WithDualAuditForAggregates(bool enabled = true)
+    {
+        _options.DualAuditForAggregates = enabled;
+        return this;
+    }
+
     public AuditConfigurationBuilder SetActionAdded(string action)
     {
         _options.ActionAdded = action;

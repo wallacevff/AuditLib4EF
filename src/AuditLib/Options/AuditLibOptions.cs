@@ -71,6 +71,9 @@ public sealed class AuditLibOptions
     /// <summary>Custom display formatter for aggregate root entity names. Receives (rootEntry, childEntry, defaultDisplay) and returns the display string. Example: "Notif #123 (via Paciente)"</summary>
     public AggregateRootDisplayFormatter? AggregateRootDisplayFormatter { get; set; }
 
+    /// <summary>Quando true e a entidade possui aggregate root mapping, gera um segundo log de auditoria para a entidade original, alem do log atribuido a raiz.</summary>
+    public bool DualAuditForAggregates { get; set; } = false;
+
     /// <summary>Friendly display names for entity type names and navigation names in diffs. Key: technical name, Value: display name.
     /// Example: "DoencaNaoRara" -> "Doença Rara", "Notificacao" -> "Notificação"</summary>
     public Dictionary<string, string> DisplayNames { get; set; } = [];

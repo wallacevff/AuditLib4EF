@@ -650,4 +650,78 @@ public class AggregateRootTests : IDisposable
         logs.Should().ContainSingle(l =>
             l.Action == options.ActionModified && l.EntityName == "Notificação (via LogAuditavel)");
     }
+
+    [Fact]
+    public void Should_generate_dual_logs_when_dual_audit_is_enabled()
+    {
+        var options = new AuditLibOptions
+        {
+            TimestampProvider = () => FixedTimestamp,
+            AggregateRootMappings = new Dictionary<Type, Type>
+            {
+                { typeof(LogAuditavel), typeof(Notificacao) }
+            },
+            DisplayNames = new Dictionary<string, string>
+            {
+                { "Notificacao", "Notificação" },
+                { "LogAuditavel", "Log Auditável" }
+            },
+            DualAuditForAggregates = true,
+            AuditLogTableName = "AuditLogs"
+        };
+        var interceptor = new AuditInterceptor(options, new TestUserContext(_userId));
+        using var context = CreateContext(interceptor);
+
+        var notificacao = new Notificacao { Descricao = "Teste" };
+        var log = new LogAuditavel { Valor = "A", Notificacao = notificacao };
+        context.Notificacoes.Add(notificacao);
+        context.LogsAuditaveis.Add(log);
+        context.SaveChanges();
+
+        log.Valor = "B";
+        context.SaveChanges();
+
+        var logs = context.Set<AuditLog>().ToList();
+        var aggregateLogs = logs.Where(l => l.EntityName == "Notificação" && l.Action == options.ActionModified).ToList();
+        var childLogs = logs.Where(l => l.EntityName == "Log Auditável" && l.Action == options.ActionModified).ToList();
+
+        aggregateLogs.Should().HaveCount(1);
+        childLogs.Should().HaveCount(1);
+        childLogs[0].PrimaryKey.Should().Be(log.Id.ToString());
+    }
+
+    [Fact]
+    public void Should_NOT_generate_dual_logs_when_dual_audit_is_disabled()
+    {
+        var options = new AuditLibOptions
+        {
+            TimestampProvider = () => FixedTimestamp,
+            AggregateRootMappings = new Dictionary<Type, Type>
+            {
+                { typeof(LogAuditavel), typeof(Notificacao) }
+            },
+            DisplayNames = new Dictionary<string, string>
+            {
+                { "Notificacao", "Notificação" },
+                { "LogAuditavel", "Log Auditável" }
+            },
+            DualAuditForAggregates = false,
+            AuditLogTableName = "AuditLogs"
+        };
+        var interceptor = new AuditInterceptor(options, new TestUserContext(_userId));
+        using var context = CreateContext(interceptor);
+
+        var notificacao = new Notificacao { Descricao = "Teste" };
+        var log = new LogAuditavel { Valor = "A", Notificacao = notificacao };
+        context.Notificacoes.Add(notificacao);
+        context.LogsAuditaveis.Add(log);
+        context.SaveChanges();
+
+        log.Valor = "B";
+        context.SaveChanges();
+
+        var logs = context.Set<AuditLog>().ToList();
+        var childLogs = logs.Where(l => l.EntityName == "Log Auditável" && l.Action == options.ActionModified).ToList();
+        childLogs.Should().BeEmpty();
+    }
 }

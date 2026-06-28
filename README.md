@@ -81,6 +81,7 @@ services.AddAuditLibWithInterceptor(builder =>
 | `WithEntitySelector(Func<Type, bool>)` | Seletor de entidades |
 | `WithAggregateSnapshot(AggregateSnapshotMode)` | Modo de snapshot para agregados (`ChildOnly` ou `FullRoot`) |
 | `WithAggregateRootDisplayFormatter(AggregateRootDisplayFormatter)` | Delegate para personalizar o display do agregado |
+| `WithDualAuditForAggregates(bool)` | Gera log duplo (raiz + entidade original) para entidades com aggregate root mapping |
 | `Entity<TEntity>()` | Configura entidade específica |
 | `SetActionAdded/Modified/Deleted(string)` | Nomes das ações |
 | `SetDiffAddedMessage/SetDiffDeletedMessage(string)` | Mensagens de diff |
@@ -352,6 +353,7 @@ Medicamentos incluidos(as):
 | `AggregateRootMappings` | `Dictionary<Type, Type>` | vazio | Mapeia tipos filhos para raiz do agregado. Ex: `typeof(Paciente) → typeof(Notificacao)` |
 | `AggregateSnapshot` | `AggregateSnapshotMode` | `ChildOnly` | Modo de snapshot para agregados: `ChildOnly` (só o filho) ou `FullRoot` (agregado completo) |
 | `AggregateRootDisplayFormatter` | `AggregateRootDisplayFormatter?` | `null` | Delegate para personalizar o display do agregado. Recebe `(rootEntry, childEntry, defaultDisplay)` e retorna a string exibida |
+| `DualAuditForAggregates` | `bool` | `false` | Gera um segundo log para a entidade original quando mapeada para aggregate root |
 
 ### Serialização
 
@@ -436,6 +438,24 @@ Isto substitui o `EntityName` no log de auditoria. Ex:
 ```
 EntityName = "Notificação (via LogAuditavel)"
 ```
+
+### Dual Audit para Agregados
+
+Por padrão, quando um filho mapeado para aggregate root é modificado, apenas um log é gerado (atribuído à raiz).  
+Ative `DualAuditForAggregates` para gerar **dois logs**: um da raiz e um da entidade original.
+
+```csharp
+// No configure global:
+options.DualAuditForAggregates = true;
+// ou via Fluent API:
+builder.WithDualAuditForAggregates(true);
+```
+
+**Efeito**: ao modificar `ItemContrato` (mapeado para `Contrato`):
+- Log 1: `EntityName = "Contrato"` / PK = id-do-contrato — diff completo do agregado
+- Log 2: `EntityName = "Item do Contrato"` / PK = id-do-item — diff escalar do item
+
+Isto permite rastrear tanto a visão agregada quanto a visão individual da entidade que efetivamente mudou.
 
 ---
 

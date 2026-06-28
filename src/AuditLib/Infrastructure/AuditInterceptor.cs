@@ -321,7 +321,7 @@ public class AuditInterceptor : SaveChangesInterceptor
         if (state == EntityState.Modified && diff == null)
             return null;
 
-        return AuditLog.Create(
+        var aggregateLog = AuditLog.Create(
             entityName,
             chavePrimaria,
             acao,
@@ -331,6 +331,31 @@ public class AuditInterceptor : SaveChangesInterceptor
             estadoAtual,
             diff
         );
+
+        if (_options.DualAuditForAggregates && isAggregate)
+        {
+            var childPk = string.Join(",", entry.Metadata.FindPrimaryKey()!.Properties
+                .Select(p => entry.Property(p.Name).CurrentValue?.ToString()));
+            var childName = ResolveDisplayName(entry.Metadata.ClrType.Name);
+            var childDiff = BuildDiff(context, entry, [], effectiveState: effectiveState);
+
+            if (state != EntityState.Modified || childDiff != null)
+            {
+                var childLog = AuditLog.Create(
+                    childName,
+                    childPk,
+                    acao,
+                    usuarioId,
+                    _options.TimestampProvider(),
+                    estadoAnterior,
+                    estadoAtual,
+                    childDiff
+                );
+                context.Set<AuditLog>().Add(childLog);
+            }
+        }
+
+        return aggregateLog;
     }
 
     private string? SerializeSnapshot(
