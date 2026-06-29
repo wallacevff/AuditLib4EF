@@ -155,13 +155,19 @@ A AuditLib intercepta chamadas `SaveChanges` do EF Core e automaticamente:
 ```csharp
 public class AppDbContext : DbContext
 {
+    private readonly AuditLibOptions _auditOptions;
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, AuditLibOptions auditOptions)
+        : base(options)
+    {
+        _auditOptions = auditOptions;
+    }
+
     // ... DbSets ...
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Aplica o mapeamento da tabela de auditoria
-        var options = serviceProvider.GetRequiredService<AuditLibOptions>();
-        modelBuilder.ApplyConfiguration(new AuditLogEntityTypeConfiguration(options));
+        modelBuilder.ApplyConfiguration(new AuditLogEntityTypeConfiguration(_auditOptions));
         
         // Filtro global para soft-delete (opcional, mas recomendado)
         foreach (var entity in modelBuilder.Model.GetEntityTypes()
@@ -587,15 +593,20 @@ using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    private readonly AuditLibOptions _auditOptions;
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, AuditLibOptions auditOptions)
+        : base(options)
+    {
+        _auditOptions = auditOptions;
+    }
 
     public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
     public DbSet<Paciente> Pacientes => Set<Paciente>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(
-            new AuditLogEntityTypeConfiguration(AuditLibOptions.Default));
+        modelBuilder.ApplyConfiguration(new AuditLogEntityTypeConfiguration(_auditOptions));
 
         foreach (var entity in modelBuilder.Model.GetEntityTypes()
             .Where(e => typeof(IAuditEntity).IsAssignableFrom(e.ClrType)))
