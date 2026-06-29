@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/yamadashy/repomix/main/config/repomix.config.schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown",
+    "parsableStyle": false,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "compress": false,
+    "topFilesLength": 10,
+    "showLineNumbers": false,
+    "copyToClipboard": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
+  },
+  "include": [],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "*.user",
+      "*.suo",
+      "*.sln.docstates",
+      ".vs/",
+      "packages/",
+      "obj/",
+      "bin/",
+      "*.nupkg",
+      ".idea/",
+      ".kilo/",
+      "repomix-output.md",
+      "repomix.config.json"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  }
+}
