@@ -6,12 +6,33 @@
     <Nullable>enable</Nullable>
     <RootNamespace>AuditLib</RootNamespace>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>AuditLib</PackageId>
-    <Description>Biblioteca de auditoria limpa e parametrizável para EF Core. Gera automaticamente trilhas de auditoria com soft-delete, diff legível e resolução de nomes.</Description>
-    <Version>1.0.0</Version>
+    <PackageId>AuditLib4EF</PackageId>
+    <Version>10.0.0</Version>
     <Authors>AuditLib</Authors>
+    <Description>Biblioteca de auditoria limpa e parametrizável para EF Core (.NET 10). Gera automaticamente trilhas de auditoria com soft-delete, diff legível, resolução de FK, suporte a agregados e nomes amigáveis.</Description>
+    <PackageTags>audit;auditoria;ef-core;entity-framework;soft-delete;audit-trail;logging;csharp;dotnet</PackageTags>
+    <PackageProjectUrl>https://github.com/seu-usuario/AuditLib</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/seu-usuario/AuditLib</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="" />
+    <None Include="icon.png" Pack="true" PackagePath="" />
+    <None Update="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
